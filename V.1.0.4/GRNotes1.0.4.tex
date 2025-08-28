@@ -1,0 +1,1159 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{natbib} 
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage[makeroom]{cancel}
+\renewcommand{\floatpagefraction}{.8}
+\geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=20mm,
+ top=10mm,
+ }
+\newcommand{\mn}{_{\mu\nu}}
+\newcommand{\umn}{^{\mu\nu}}
+\newcommand{\rr}{_{rr}}
+\newcommand{\p}{\partial}
+
+\title{Intuition and Primer for General Relativity and Differential Geometry}
+\author{Ben Pennell}
+\date{V1.0.4 August 28th, 2025}
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+My aim with this document is to bridge the gap that I often see (and experienced myself) when physicists are taught cosmology. In a perfect world, courses building to and on differential geometry would be taken before courses on General Relativity and Cosmology. For physics undergraduates, this is often not possible and in all honesty is not required. However, this makes learning the material more challenging and courses are often not designed with this in mind. In this document I will start from early undergraduate physics and mathematics taken in standard physics degrees. In other words I will only require the following knowledge: multivariable calculus, linear algebra, ordinary differential equations, and some classical mechanics (if you know what a Lagrangian is, you're set). From that, I will motivate many critical elements for the machinery and results normally taught in courses on General Relativity and Cosmology.
+
+\end{abstract}
+
+\tableofcontents
+
+\section{Additional Reading}
+Here are the books I've found to be the most useful when I was learning this material. Each has different things to offer, and this document is essentially a compilation of sections of each of these that worked best for my understanding. Full versions can be found online for all of these works.
+\begin{enumerate}
+    \item Matthias Bartelmann: General Relativity
+    \item Hobson MP, Efstathiou GP, Lasenby AN: General Relativity: An Introduction for Physicists
+    \begin{itemize}
+        \item Great introduction to the mathematics for physicists. Is largely what these notes are based on. Sections significantly inspired will be denoted by HEL and chapters will be listed
+    \end{itemize}
+    \item David Tong: Lectures on General Relativity (online) https://www.damtp.cam.ac.uk/user/tong/gr.html
+    \item Daniel Baumann: Cosmology
+    \item Landau, Lifshitz: Course of Theoretical Physics volume 2: The Classical Theory of Fields
+    \begin{itemize}
+        \item Great introduction to the principles of special relativity, and provides the best understanding of field theories and the action. As a warning, this book is challenging to read and requires serious time commitment
+    \end{itemize}
+\end{enumerate}
+
+\section{Pythagoras to Einstein}
+\subsection{The line element}
+We will start ourselves off as simple as we possibly can. If we're working in 3-dimensional euclidean space, you can calculate the distance (for the sake of convention, written as $s$) between two points with
+
+\begin{equation}
+    s^2 = \Delta x^2 + \Delta y^2 + \Delta z^2
+\end{equation}
+
+This is \textit{Pythagoras' theorem}, I sure hope you're familiar with it.
+
+Now, let's consider two points that are infinitesimally separated. We just change our finite difference $\Delta$ to an infinitesimal $d$
+
+\begin{equation}
+    ds^2 = dx^2 + dy^2 + dz^2 \label{eq:dseuc}
+\end{equation}
+
+Still nice and simple. Now, let's bring up the single most important fact that you must keep in mind for the rest of your GR career
+
+\begin{equation}
+    \boxed{\text{Physics is not coordinate-dependent}}
+\end{equation}
+
+Physics works as it does, regardless of what you choose to call the center of your system, or how big you define a meter or a second to be. My GR professor, David Curtin's words have been drilled into my mind: \textit{if you find that your physics is coordinate-dependent, it is not interesting, it is wrong}. This is a good thing to keep in mind, and is actually a good sanity check to make sure you've done calculations correctly.
+
+Let's return to our distance between points.
+
+We could have also worked in spherical coordinates, and physics should remain the same. You can work this out for yourself if you'd like, but the distance between two infinitesimally separated points would be
+
+\begin{equation}
+    ds^2 = dr^2 + r^2d\theta^2 + r^2\sin^2(\theta)d\phi^2 \label{eq:dssphere}
+\end{equation}
+
+Critically, $ds^2$ is a physical object. Whether defined by spherical, euclidean, or any other coordinate system, it is the same object in space, we just give it different representations.
+
+There must be a way that we can write $ds^2$ that doesn't depend on coordinates, then. This would be nice to have, since we wouldn't have to worry about our choice of coordinates. We can work this out by finding a way to generate both Equations \ref{eq:dseuc} and \ref{eq:dssphere} from a single functional form to find this general coordinate-free representation. To start, we could have also written $ds^2$ in the euclidean coordinates as
+
+\begin{equation}
+    ds^2 = \sum_i dx_i^2
+\end{equation}
+
+Where we have three different components $x_1 = x, x_2 = y, x_3 = z$. Likewise, we could write $ds^2$ with the spherical coordinates as
+
+\begin{equation}
+    ds^2 = \sum_i c_i dx_i^2
+\end{equation}
+
+Where we have a set of constants $c_1 = 1, c_2 = r^2, c_3 = r^2\sin^2(\theta)$ and coordinates $x_1 = r, x_2 = \theta, x_3 = \phi$. In fact, this form also works for euclidean space, where each of $c_i = 1$. 
+
+We can simplify our notation a bit. Henceforth, if you ever see an index (like $i$ in the previous equation) that appears twice in one term, it's implied to be summed over. In general, one writes one of the indices as a superscript and one as a subscript. You can spot the summation by matching a superscript and subscript index. Our equation would take the form
+
+\begin{equation}
+    ds^2 = c^i dx_i^2
+\end{equation}
+
+Which means the same thing. We soon will see these upper and lower indices generalize to represent \textit{covariant} and \textit{contravariant} components of vectors. But for now, we'll carry on
+
+Now, if I had some space that was more complicated than euclidean space, I could have some other weird features in $ds^2$. For example, a rotating wormhole could have it look like
+
+\begin{equation}
+    ds^2 = Adt^2 + Bdr^2 + Cd\theta^2 + Dd\phi^2 + Edtd\phi
+\end{equation}
+
+Where this comes from isn't too relevant, but for now, notice that we have a term with $dtd\phi$. So, it is possible that we won't just have all of our coordinates showing up quadratically. If we want to extend our definition of $ds^2$ to incorporate this, we need to get slightly more complicated.
+
+We will have to promote our 1-dimensional vector $c^i$ to a 2-dimensional matrix. You can think of this as the coefficient for every possible mix of coordinates. For the rotating wormhole, it would look like
+
+\begin{equation}
+    \begin{bmatrix}
+    A & 0 & 0 & E \\
+    0 & B & 0 & 0 \\
+    0 & 0 & C & 0 \\
+    E & 0 & 0 & D \\
+    \end{bmatrix}
+\end{equation}
+
+While for spherical coordinates it would look like
+
+\begin{equation}
+    \begin{bmatrix}
+    1 & 0 & 0 \\
+    0 & r^2 & 0 \\
+    0 & 0 & r^2\sin^2(\theta)\\
+    \end{bmatrix}
+\end{equation}
+
+In Cartesian, it is simply the identity matrix. For now, you can also note that this matrix has to be symmetric, since swapping the order of multiplication makes no difference.
+
+The convention is to call this matrix $g_{\mu\nu}$, where the labels $\mu$ and $\nu$ tell you which row and column to look at, respectively.
+
+Our equation for $ds^2$ now takes the form
+
+\begin{equation}
+    ds^2 = g_{\mu\nu} dx^\mu dx^\nu    
+\end{equation}
+
+Noting that we sum over every possible index $\mu$ and $\nu$. This could just as easily be written 
+
+\begin{equation}
+    ds^2 = g^{\mu\nu} dx_\mu dx_\nu    
+\end{equation}
+
+And now this represents our object $ds^2$ for \textit{any} coordinate system you want! 
+
+Now, we can define some differential geometry lingo. $ds^2$ is referred to as the \textit{line element}, and $g_{\mu\nu}$ is the \textit{metric}. Additionally, $g_{\mu\nu}$ is our first example of a \textit{tensor}. We'll explore what a tensor even is in the next chapter.
+
+In general, the metric will define a volume element in space. In fact, it is the square root of the determinant of this matrix that defines it. This can be made clear by taking the determinant of the spherical coordinate matrix drawn above. You get $R^4\sin^2(\theta)$, the square root of which gives $R^2\sin(\theta)$ which is the volume element that you may recall from multivariable calculus.
+
+\subsection{Special Relativity}
+Now, let's get into the specifics of special relativity. First, we take from experiments that the \textit{principle of relativity} is valid. That is, the laws of physics are the same in all intertial frames of reference. When we do physics in our classrooms, like for example classical mechanics with interacting particles, we assume the particles interact instantaneously. We take from observations that instantaneous interactions do not exist. Since there are no instantaneous interactions, there is some maximum \textit{signal velocity} at which interactions propagate. This is because some amount of time has to elapse between an event and another body witnessing it, you can divide the distance by that time and work out the velocity that the signal travelled at. Notably, this must simply be a fundamental feature of the vacuum.
+
+As a result of the principle of relativity, and the fact that this is a property of the vacuum and not any particular object, this signal velocity should be the same in all inertial frames of reference and is a universal constant. We call this velocity \textit{the speed of light}. One can actually see how this velocity is a natural property of the vacuum as a result of electromagnetism.\footnote{although the speed of light is \textit{the} fundamental constant. Permittivity and Permeability exists as a result of \textit{it}. I demonstrate this example in this way because it helped me connect disparate aspects of physics together in my mind.}
+
+Consider the maxwell equations in free space, you can find that they generate propagating wave solutions. I'll leave it as an exercise, but by decoupling the $E$ and $B$ equations by cleverly applying the curl and divergence operators, that for the electric field look like
+
+\begin{equation}
+    \nabla^2E = \mu_0\epsilon_0 \frac{\partial^2 E}{\partial t^2}
+\end{equation}
+
+We will also see how to derive this functional form in Section~\ref{sec:EM}. For now, just know that this simply describes a wave that travels at a speed related to the coefficient $v = \frac{1}{\sqrt{\mu_0 \epsilon_0}}$, which of course is the speed of light!
+
+Recall that $\epsilon_0$ and $\mu_0$ are just constants (properties of the vacuum) that you used in your electrostatics formulas, and their values were determined from observations, and the speed of light is a constant based on them.
+
+The next insight to build into special relativity is to consider time as a coordinate. After all, we're all moving forwards in time at a (usually) constant rate. Of course, it may seem odd to think of time as a coordinate alongside space, but by multiplying time by the speed of light, you get a distance and so the units make sense. One would write the line element for \textit{flat spacetime} or \textit{Minkowski spacetime} like
+
+\begin{equation}
+    ds^2 = -c^2dt^2 + dx^2 + dy^2 + dz^2
+\end{equation}
+
+And, in general, one might also swap all the signs on the right hand side of this equation if they so chose. Choosing where to put the negative signs is just a matter of notation and is called the \textit{signature} of the space. For this document, I will take the $(-+++)$ convention because it's totally better.
+
+What this line element describes is the difference between your spacial distance and the signal distance travelled in the same amount of time. As a result, light travels on \textit{null} paths, where $ds^2=0$. So, the magnitude of the line element of Minkowski space just describes your deviation from a light path. One would call a positive line element \textit{spacelike} and a negative line element \textit{timelike}. For normal situations, things are spacelike.
+
+Of course, since one cannot exceed the speed of light, the addition of velocities takes a more complicated form to avoid the fact that standard summing of velocities could cause you to end up faster than light.
+
+Consider euclidean space with just two coordinates: time $t$ and one spacial coordinate $x$. We take two frames of reference: one which is \textit{boosted} along the $x$-direction by a velocity $v$. We denote the boosted frame with primes. Furthermore, the two frames of reference both start at $t=t'=0$.
+
+In general, the new coordinates are arbitrary functions of the old coordinates
+
+\begin{align}
+    t' &= At + Bx \\
+    x' &= Dt + Ex
+\end{align}
+
+The game here now is to constrain the functional forms and values of $A,B,D,E$.
+
+Since the primed coordinates are just a boost of the original coordinates, we have constructed that at $x'=0$, $x=vt$. So, we can write the second equation from above as
+
+\begin{equation}
+    0 = Dt + Evt
+\end{equation}
+
+Which yields that $D = -Ev$. Similarly, at $x=0$, $x'=-vt'$, so, we can rewrite the first equation as
+
+\begin{equation}
+    t' = At
+\end{equation}
+
+Which can then be plugged into the second equation,
+
+\begin{align}
+    -vt' &= -Evt \\
+    \implies -vAt &= -Evt
+\end{align}
+
+Meaning that $A = E$. We can rewrite the primed coordinates as
+
+\begin{align}
+    t' &= At + Bx \\
+    x' &= A(x-vt)
+\end{align}
+
+Now, one can imagine writing the line element in both coordinate systems
+
+\begin{equation}
+    ds^2 = -c^2t^2 + x^2 = -c^2t'^2 + x'^2
+\end{equation}
+
+We can plug in the relationships from above,
+
+\begin{align}
+    -c^2t^2 + x^2 &= -c^2(At + Bx)^2 + (Ax - Avt)^2 \\
+    -c^2t^2 + x^2 &= -c^2A^2t^2 - c^2B^2x^2 -2c^2AtBx + A^2x^2 + A^2v^2t^2 - 2A^2xvt
+\end{align}
+
+So, from dimensional analysis we can collect the $t^2$ terms
+
+\begin{align}
+    -c^2t^2 &= -c^2A^2t^2 + A^2v^2t^2 \\
+    &\downarrow \\
+    A &= \frac{1}{\sqrt{1 - \frac{v^c}{c^2}}} \equiv \gamma
+\end{align}
+
+Where we call $\gamma$ the \textit{lorentz factor}. Also from dimensional analysis, we can collect the $tx$ terms
+
+\begin{align}
+    2c^2AtBx &= -2A^2xvt \\
+    B &= -\frac{v}{c^2}A
+\end{align}
+
+So, finally, we obtain
+
+\begin{align}
+    t' &= \gamma(t - \frac{v}{c^2}x) \\
+    x' &= \gamma(x-vt)
+\end{align}
+
+Which is called a \textit{lorentz boost} in the $x$-direction. this factor of $\gamma$ prevents speeds from crossing the speed of light. This comes into play with two effects which can be read off from the previous equations for the boosted coordinates:
+
+\begin{itemize}
+    \item Length Contraction: a proper length $l$ along the boost gets reduced to $\frac{l}{\gamma}$
+    \item Time Dilation: the time observed by a particle travelling with the boost is increased to $\gamma t$
+\end{itemize}
+
+We can now amend the principle of relativity
+
+\begin{equation}
+    \boxed{\text{The laws of physics are the same in all intertial frames of reference, and those laws are that of special relativity}}
+\end{equation}
+
+\section{What the hell is a tensor?}
+Oh, you'd like to know what a tensor is? Here's the most precise possible answer:
+\begin{itemize}
+    \item Tensors are objects that transform as tensors
+\end{itemize}
+
+Does that help?
+
+I imagine not. I hope that by the end of this section, you will not only understand this circular sounding argument, but you will agree that it's actually the best and most intuitive way to talk about tensors.
+
+\subsection{Manifolds}
+Let's start things off by introducing an important (and not too complicated) piece of differential geometry, the concept of a \textit{manifold}.
+
+A mathematician may define a manifold like
+
+\begin{center}
+    \textit{A manifold is a parameterisable surface whose local geometry is euclidean}
+\end{center}
+
+Which is a bit of word soup, so let me translate that.
+
+Think of the surface of the earth. It is a surface on which I can create coordinate systems (like, longitude and latitude) to define my position uniquely on it, this is it being ``parameterisable".\footnote{Of course, you can't actually define it with only one coordinate system. To understand why, think: what is your longitude when you're at the north pole?} Further, while I'm a small human standing on the surface of the earth, it looks like it's flat (but rest assured, it's not). When I am calculating how far I throw a baseball, I can get a pretty good approximation by ignoring the earth's curvature. This is it being ``locally euclidean".
+
+We've encountered manifolds in our physics careers many times before. In classical or statistical mechanics, you may have encountered phase space $(q_i, p_i)$. For a single particle, this is a six-dimensional manifold. For a collection of N particles in statistical mechanics, this is a 6N-dimensional manifold.
+
+We can further define a \textit{differentiable manifold} as
+\begin{itemize}
+    \item continuous: there exist infinitesimally separated points in the neighbourhood of any given point p on the manifold
+    \item differentiable: a differentiable scalar field can be established everywhere
+\end{itemize}
+
+Which is some jargon, but just understand that this is just the same definition of a continuous function from first year calculus, just with some more grown-up verbiage to be more general. This also never really comes up in GR, all of our manifolds will be well behaved.
+
+Finally, for interests' sake, one could write line elements that are more complicated than what we've seen, for manifolds that are more complicated than we've seen, but this isn't necessary for physics applications. We stick to the form described before, which is called a \textit{pseudo-Riemannian manifold}. This just requires (essentially) that all terms in the line element are quadratic.
+
+\begin{equation}
+    ds^2 = g^{\mu\nu} dx_\mu dx_\nu    
+\end{equation}
+
+\subsection{Vectors: Covariance and Contravariance}
+Vectors are objects which can be labelled with one index. You can describe them with several components that each scale the basis vectors $e_i$ of your coordinate system. 
+
+\begin{equation}
+    \vec{v} = \begin{pmatrix} v_1 \\ v_2 \\ v_3 \end{pmatrix} = v_1 e_1 + v_2 e_2 + v_3 e_3 = v^i e_i
+\end{equation}
+
+So, if you change your coordinate system, you would change $e_i$, and so you would get different values for $v_i$. But, like with the line element, the object $\vec{v}$ exists regardless of how you define your coordinates.
+
+Now, we formalize the nature of these upstairs and downstairs indices. Standard vectors are written as $v^i e_i$. But, we can define so-called \textit{dual basis vectors} $e^i$ with
+
+\begin{equation}
+    e^i e_j = \delta^i_j
+\end{equation}
+
+Which are a complementary set of coordinates to the original. Writing our vector $\vec{v}$ in this dual basis is done as
+
+\begin{equation}
+    \vec{v} = v_i e^i
+\end{equation}
+
+Formally, we refer to these descriptions as
+\begin{itemize}
+    \item $v^i$ is the contravariant component
+    \item $v_i$ is the covariant component
+\end{itemize}
+
+A way to internalize what contravariant and covariant mean is to consider a transformation. If we have a vector that exists in space, and we change the length of one of the basis vectors, the value of the corresponding component of the vector will change. Covariant components change with the transformation, while contravariant components change inversely to the transformation. This makes their naming scheme intuitive, ``co" means with so covariant is changing-with, while ``contra" means against so contravariant means changing-against. 
+
+As an example, if I have a vector in euclidean space, and then I double the length of my $x$ basis vector, the covariant representation of the $x$ coordinate of my vector would double, while the contravariant representation of the $x$ coordinate would half. For now it may seem arbitrary to use these, but you will see how they affect the math and are unfortunately quite important.
+
+Here's another way to understand the difference. The dot product of two vectors $v$ and $w$ is defined as
+
+\begin{equation}
+    v \cdot w = v^i w_i
+\end{equation}
+
+So you can in some way think of the contravariant component as a row vector, while the covariant is a column vector. After all, to do that matrix multiplication in the linear algebra sense, you'd have to set up your vectors that way. So, back in first year when you'd arbitrarily switch a column vector to a row vector to do a dot product, you were actually jumping between contravariant and covariant representations!
+
+\subsection{Vector transformations}
+Let's think about how vectors transform when you change coordinates. Imagine you have two coordinate systems. A vector $\vec{v}$ is a physical object which can be defined with either coordinate system but physically remain unchanged, so for different representations $a$ and $b$,
+
+\begin{equation}
+    \vec{v} = v^a e_a = \tilde{v}^b \tilde{e}_b
+\end{equation}
+
+Isolating for the new vector representations $\tilde{v}^b$,
+
+\begin{equation}
+    \tilde{v}^b = \frac{e_a}{\tilde{e}_b} v^a
+\end{equation}
+
+This tells us how the new vector looks after the transformation. Now, let's consider the line element. This is also a physical object that can be represented by either coordinate system
+
+\begin{equation}
+    ds = e_a dx^a = \tilde{e}_b d\tilde{x}^b
+\end{equation}
+
+In other words,
+
+\begin{equation}
+    \frac{e_a}{\tilde{e}_b} = \frac{d\tilde{x}^b}{dx^a}
+\end{equation}
+
+Which we can plug into our equation for $\tilde{v}^b$,
+
+\begin{equation}
+    \tilde{v}^b = \frac{d\tilde{x}^b}{dx^a} v^a
+\end{equation}
+
+Which tells you how vectors change with a change in coordinates.
+
+$\frac{d\tilde{x}^b}{dx^a}$ can be written as a matrix, and this is known as the \textit{Jacobian}. Does that name sound familiar? \textit{I hope it does}. Just like when defining the line element before, and we had a volume element show up, we now have to define how this volume element changes. This is just like when you made coordinate transforms in multivariable calculus or elsewhere, and had to use a Jacobian matrix (and the square root of the determinant of it) to think about how the volume element changes when you computed integrals in differnet coordinate systems. It's the same principle here.
+
+But notice how this is only telling us how the contravariant components transform. How do the covariant ones transform? We can work this out by starting with swapping all the indices from the contravariant relationship
+
+\begin{equation}
+    \tilde{v}_b = \frac{e^a}{\tilde{e}^b} v_a
+\end{equation}
+
+If we want to have the same structure in our Jacobian (that is, all upper indices in our coordinates $dx^i$), we have to work with lower indices in our basis vectors. Recall that the basis vectors and their duals are related by $e^i = \frac{1}{e_i}$. So,
+
+\begin{equation}
+    \tilde{v}_b = \frac{\tilde{e}_b}{e_a}v_a
+\end{equation}
+
+Which gives us,
+
+\begin{equation}
+    \tilde{v}_b = \frac{dx^a}{d\tilde{x}^b} v_a
+\end{equation}
+
+Which you can see is the inverse of the Jacobian for the contravariant case. This is the mathematical way of describing what I was talking about before, where the covariant and contravariant component scale inversely to each other.
+
+\subsection{Building to the Covariant Derivative}
+Euclidean space is super simple, but once we even jump to spherical coordinates there's some other weird effects. Think about setting up the surface of a sphere in spherical coordinates. As you move latitudinally, the direction of your $\vec{\theta}$ basis vector changes direction, and as you move longitudinally, your $\vec{\phi}$ basis vector changes! that's super weird, and there must be a mathematical way to describe this.
+
+We consider how a basis vector changes as you move in a particular direction. The derivative of a basis vector with respect to a particular coordinate is, in general, dependent on every other coordinate. So, you could colloquially say that all the basis vectors are connected to one another and the functional form of this relationship is their \textit{connection}.
+
+\begin{equation}
+    \frac{\partial e_b}{\partial x^c} = \Gamma^a_{bc} e_a
+\end{equation}
+
+This equation looks complicated but all I've done is define this object $\Gamma^a_{bc}$ that relates every basis vector to the derivatives of every other basis vector by every coordinate. $\Gamma^a_{bc}$ goes by many names. In defining it I called it \textit{the connection}. More technically it could be called the \textit{levi-civita connection} or the \textit{affine connection}, which is the name I prefer to use.\footnote{For reasons beyond this document, I find this to be the most illuminating way to name this as it connects to this adjective \textit{affine} which is used elsewhere in maths.} Often it is also called a \textit{Christoffel}, but that's an unenlightening name.
+
+Rearranging, we get the formula for the affine connection
+
+\begin{equation}
+    \Gamma^a_{bc} = e^a \frac{\partial e_b}{\partial x^c}
+\end{equation}
+
+This is useful, because taking the derivative of a vector is actually non-trivial. Let's say I wanted to see how my vector field $\vec{v}$ changes as I move along a particular direction. This is the following derivative, which we will write in a compact notation
+
+\begin{equation}
+    \frac{\partial \vec{v}}{\partial x^a} = \partial_a\vec{v}
+\end{equation}
+
+Recall that a vector is actually the dot product between its components in a particular coordinate system and the basis vectors in that coordinate system. You'll actually have to product rule it and you'll have two terms
+
+\begin{equation}
+    \partial_a\vec{v} = \partial_a(v^b e_b) = e_b\partial_av^b + v^b\partial_ae_b
+\end{equation}
+
+for the second term, we will need our affine connection! Good thing we've defined that,
+
+\begin{equation}
+    \partial_a\vec{v} = e_b\partial_av^b + v^b \Gamma^c_{ab} e_c
+\end{equation}
+
+We are free to relabel summed-over indices, doing so let's you write this as
+
+\begin{equation}
+    \partial_a\vec{v} = (\partial_av^b + v^c \Gamma^b_{ac}) e_b
+\end{equation}
+
+the inside of the bracket is defined as the \textit{covariant derivative}.
+
+\begin{equation}
+    \nabla_a v^b = \partial_av^b + v^c \Gamma^b_{ac}
+\end{equation}
+
+This might seem arbitrary, but this should actually make logical sense. This is just a silly looking version of the multivariable chain rule! Think about it,
+
+\begin{equation}
+    \frac{d}{d t} f(x(t),t) = \frac{\partial}{\partial t}f + \frac{\partial f}{\partial x} \frac{\partial x}{\partial t}
+\end{equation}
+
+The total derivative of this function has two terms: one with the simple partial derivative, and one where you chain deeper into the function. These are analagous to the two terms in the covariant derivative. Elsewhere in physics you see this, from the convective derivative to Liouville's theorem. So, it shouldn't seem that crazy. The covariant derivative can be just thought of as a total derivative of a vector, in that sense, it's obvious we need a connection term.
+
+What's particularly powerful about the covariant derivative is that we've removed coordinate dependence. So, 
+
+\begin{equation}
+    \boxed{\text{If a covariant equation is true in one coordinate system, it's true in all coordinate systems}}
+\end{equation}
+
+Combining this with an abuse of symmetry allows us to do most of what we do in general relativity. So, it will be the general strategy going forward to move equations into ``Covariant" mode by using covariant derivatives and other coordinate-free representations.
+
+\subsection{Tensors}
+Let's take stock of the objects that we've come across
+\begin{itemize}
+    \item A scalar is a zero-index object $s$
+    \item A vector is a one-index object, like a velocity $v^i$
+    \item A tensor is a two-index object, like our metric $g_{\mu\nu}$
+\end{itemize}
+
+We can return to that circular argument from the beginning of this section and understand it a bit better. Think about our line element, represented in two coordinate systems
+
+\begin{equation}
+    ds^2 = g_{ab} dx^a dx^b = \tilde{g}_{cd} d\tilde{x}^c d\tilde{x}^d
+\end{equation}
+
+To figure out how the metric tranforms with the new coordinate system, we want to solve for $\tilde{g}_{cd}$ in terms of $g_{ab}$. We can write into this equation,
+
+\begin{equation}
+    g_{ab} \biggl(\frac{dx^a}{d\tilde{x}^c}d\tilde{x}^c\biggr) \biggl(\frac{dx^b}{d\tilde{x}^d}d\tilde{x}^d\biggr) = \tilde{g}_{cd} d\tilde{x}^c d\tilde{x}^d
+\end{equation}
+
+And by rearranging, we get
+
+\begin{equation}
+    \biggl(g_{ab} \frac{dx^a}{d\tilde{x}^c} \frac{dx^b}{d\tilde{x}^d} \biggr) d\tilde{x}^c d\tilde{x}^d = \tilde{g}_{cd} d\tilde{x}^c d\tilde{x}^d
+\end{equation}
+
+We can read off that
+
+\begin{equation}
+    \tilde{g}_{cd} = g_{ab} \frac{dx^a}{d\tilde{x}^c} \frac{dx^b}{d\tilde{x}^d}
+\end{equation}
+
+This is how a tensor transforms under such a coordinate change. In general, anything is a tensor if they transform using this equation, just as we discussed at the beginning of the section. You can think of it as being scaled by two jacobians, one for each index. For higher order tensors (ones with three or more indices), you would just pick up more jacobians.
+
+\subsection{The Metric Tensor}
+To promote ourselves from special relativity (Minkowski spacetime) to general relativity (curved spacetime), we need to get a better handle on the metric tensor.
+
+The metric tensor was used to define a line element on a manifold, like,
+
+\begin{equation}
+    ds^2 = g^{\mu\nu} dx_\mu dx_\nu    
+\end{equation}
+
+and notably the metric in a way defines the surface, so one might expect that it is a function of the basis vectors which span that surface. Let's think more about what basis vectors actually are.
+
+Imagine two infinitesimally separated points, and a vector $\vec{s}$ pointing from one to the other. We have a set of coordinates $x^i$. We would define the basis vector $e_i$ corresponding to each coordinate to be the vector tangent to the curve $\vec{s}$, along $x^i$, that define an infinitesimal separation. In mathematical terms, this is written as
+
+\begin{equation}
+    e_i = \lim_{\delta x^i \rightarrow 0} \frac{\delta \vec{s}}{\delta x^i}
+\end{equation}
+
+One could immediately see that this can be rewritten as (which an interchange of displacement $\delta$ and infinitesimal $d$)
+
+\begin{equation}
+    ds = e_i dx^i
+\end{equation}
+
+which, squared, is just the line element
+
+\begin{equation}
+    ds^2 = e_i e_j dx^i dx^j
+\end{equation}
+
+From which we can read off that
+
+\begin{equation}
+    g_{\mu\nu} = e_\mu \cdot e_\nu
+\end{equation}
+
+So, the metric is directly a function of our basis vectors. 
+
+The metric has another interesting property that has until now been glossed over. It can be used to raise and lower indices in other objects. Think about it this way: for a vector $\vec{v}$,
+
+\begin{equation}
+    \vec{v} = v^ae_a
+\end{equation}
+
+Which, with the identity that $e^ae_b=\delta^a_b$, can be rearranged to
+
+\begin{equation}
+    \vec{v} e^a = v^a
+\end{equation}
+
+now, consider 
+
+\begin{equation}
+    g_{ab} v^a
+\end{equation}
+
+What would this become? Well, we can take our above equation and substitute it in
+
+\begin{equation}
+    g_{ab} v^a = g_{ab} \vec{v} e^a
+\end{equation}
+
+Now, using the basis vector representation of the metric,
+
+\begin{equation}
+    g_{ab} \vec{v} e^a = e_a e_b \vec{v} e^a = e_b \vec{v} = v_b
+\end{equation}
+
+So,
+
+\begin{equation}
+    g_{ab} v^a = v_b
+\end{equation}
+
+So, the metric just switches the index from upstairs to downstairs! This applies just as equally to tensors, and is invaluable in doing calculations in General Relativity. 
+
+Armed with this knowledge, one can rewrite the affine connection that was established in the previous section, and write it in terms of the metric. This is a long calculation and isn't particularly illuminating, but the result is
+
+\begin{equation}
+    \Gamma^a_{bc} = \frac{1}{2}g^{ad}(\partial_bg_{dc} + \partial_cg_{bd} - \partial_dg_{bc})
+\end{equation}
+
+So, it's a bunch of derivatives of the metric! Recall its motivation as part of the definition of the covariant derivative. In essence, it's describing the intrinsic \textit{slope} of the manifold. The way we use it is indeed quite similar to how one uses the first derivative while analysing functions. 
+
+% We will next motivate curvature, which is highly important in general relativity, and one will see that it is just a  tensor based on a bunch of second derivatives of the metric. Then, the field equations are defined by this curvature.
+
+\section{Fields}
+Field theory is hard. As someone from the middle of the Canadian prairies, one might think that I'd understand fields well, but unfortunately I found this material very challenging to learn. The notation is what makes it especially difficult, so I will build up different parts of the notation and pieces of intuition in separate sections. Hopefully it helps our understanding when taken as a whole. 
+
+\subsection{Note on Counting Degrees of Freedom}
+It is sometimes a challenge to understand how many degrees of freedom we're working with once we jump into field theories, and the notation can very much obscure it. To build some better intuition, let's start all the way from the bottom to understand how to spot them. Let's start with the dead simple. In the following equation,
+
+\begin{equation}
+    A + B + C = D
+\end{equation}
+
+There are three degrees of freedom. If I then add another equation to the system,
+
+\begin{equation}
+    2A - 3B + C = 0
+\end{equation}
+
+We end up with two degrees of freedom, since one has been eliminated, because the seocnd equation represents a new constraint. Formally, this is because this is linearly independent of our previous equation, and so adds an additional constraint on the values of $A, B,$ and $C$. So, one has to be careful because you could have what looks like four constraining equations, but they may only represent three (or fewer) degrees of freedom if they are not independent of each other.
+
+If I then add two more independent equations to our system, each of these variables would be uniquely defined (in other words, no more degrees of freedom). We understand how this works, each equation eliminates a degree of freedom, and a number of equations equal to the number of variables uniquely identifies them all. Let's promote to some different notation now. Let's say I have a vector
+
+\begin{equation}
+    v = \begin{pmatrix} a \\ b \\ c \\ d \end{pmatrix}
+\end{equation}
+
+There are four degrees of freedom here. Now, let's say that my vector must satisfy
+
+\begin{equation}
+    v^\mu v_\mu = 5
+\end{equation}
+
+This is simply an equation, $a^2 + b^2 + c^2 + d^2 = 5$. This, like before, reduces our degrees of freedom by one. So, vector identities can be used in the same way as adding linear equations to a system of linear equations; they can eliminate degrees of freedom. This is done all the time in general relativity and cosmology. Additionally, we can work with tensors. Imagine a tensor that we can imagine as a 3x3 matrix
+
+\begin{equation}
+    m_{\alpha\beta} = \begin{bmatrix}
+    a & b & c \\
+    d & e & f \\
+    g & h & i \\
+    \end{bmatrix}
+\end{equation}
+
+This has nine degrees of freedom. Now, if we said that our matrix was symmetrical $m_{\alpha\beta} = m_{\beta\alpha}$,
+
+\begin{equation}
+    m_{\alpha\beta, \text{sym}} = \begin{bmatrix}
+    a & b & c \\
+    b & e & f \\
+    c & f & i \\
+    \end{bmatrix}
+\end{equation}
+
+So there are six degrees of freedom. Now, if we decided that it was antisymmetric $m_{\alpha\beta} = - m_{\beta\alpha}$, you can never have non-zero diagonals 
+
+\begin{equation}
+    m_{\alpha\beta, \text{asym}} = \begin{bmatrix}
+    0 & b & c \\
+    b & 0 & f \\
+    c & f & 0 \\
+    \end{bmatrix}
+\end{equation}
+
+So there's only three degrees of freedom, which is quite constraining. Fortunately, we get to abuse this often. 
+
+Consider a tensor describable by a 4x4 matrix, which is most from general relativity. It would have 16, 10, and 6 degrees of freedom for the normal, symmetric, and antisymmetric cases respectively.
+
+\subsection{What the hell is an action?}
+The action (and the equations of motion) may be one of the most useful and universal pieces of physics that one can learn. With a good enough handle on how it works, you can solve any mechanics problem that you come across, as well as being able to entirely derive the laws of electromagnetism and gravity from first principles. Although we've all heard of ``extremising the action" or something like it, this is something often obscured and left not fully understood. Let's see if we can fix that.
+
+Imagine that you're moving a particle from point $A$ to point $B$, like throwing a baseball. Which path does the particle take? In general, if I throw a baseball multiple times in the exact same manner, it appears to always take the same path, so somehow the baseball knows which path to take. How does it know?
+
+You might be yelling into the page right now ``well Ben, of course it knows where to go on a particular path, it just follows gravity. It will move along the steepest potential difference!". 
+
+First, there's no need to yell. Second, how does the baseball \textit{know} to travel along the potential difference? Also, if the baseball has some momentum (like, from me throwing it), it won't travel perfectly along the potential gradient. Clearly the baseball is deciding how much to follow the potential difference at a given time, and how much to just continue on doing its thing\footnote{I believe physicists call this inertia}.
+
+Let's think more about the baseball's motion. If the baseball is moving against the potential gradient, it would be quite unhappy about this. You'd have to push it to do so. But, just moving directly with the potential gradient also doesn't entirely make it happy, since it also wants to continue the direction in which it's already moving.
+
+One could imagine the baseball assigning a ``score" to every possible path between points $A$ and $B$ depending on how happy it would be to take it. This score is referred to as the \textit{action} $S$. The baseball will take the path which minimizes this action. Since this score is decided over the whole length of the path, one can define the action as an integral over such a path
+
+\begin{equation}
+    S = \int_A^B L dt
+\end{equation}
+
+Where we integrate from $A$ to $B$ over some time $t$,\footnote{In general this could be any parametrising variable. For classical mechanics, it's almost always time.} over some unknown function $L$ defined on the path. This function is called the \textit{Lagrangian}. Since this is a function of our path, it will be a function of the \textit{dynamical variables} in our system. For a system of particles, the dynamical variables are the positions and velocities of all the particles. For a system like a pendulum, it will be dependant on the angle of the pendulum. We write our dynamical variables as $q_i$ and their time derivatives as $\dot{q}_i$. For now, let's pretend there's just one coordinate and drop the indexing. Since, in general, this could also be dependant on time, we can write our action as
+
+\begin{equation}
+    S = \int_A^B L(q, \dot{q}, t) dt
+\end{equation}
+
+Now, we can ask the particle what path it would like to go on. The particle tells us that it wants to take the minimum action\footnote{In general, it's just an extremum of the action, so it could be a maximum or a saddle. In general relativity, it's actually usually the maximum.} and so we should look at when the variation of the action is very small. So, we can apply a variation to the action and multivariable-calculus it through the integral. Since this isn't time dependant, we only pick up the $q$ and $\dot{q}$ terms.
+
+\begin{equation}
+    \delta S = 0 = \int_A^B \biggl( \frac{\partial L}{\partial q}\delta q + \frac{\partial L}{\partial \dot{q}} \delta \dot{q} \biggr) dt
+\end{equation}
+
+Now, that second term looks ripe for integrating by parts
+
+\begin{equation}
+    \int_A^B \frac{\partial L}{\partial \dot{q}} \delta \dot{q} dt = \biggl[ \frac{\partial L}{\partial \dot{q}} \delta q \biggr]_A^B - \int_A^B \frac{d}{dt}\biggl(\frac{\partial L}{\partial \dot{q}}\biggr) \delta q~dt
+\end{equation}
+
+Now, we've been varying the path but each time we've been holding the beginning and end points fixed (I've told my baseball where it's starting from and where it's landing, and it's just choosing which way to go about it), and the first term is asking for $\delta q$ at those boundaries. By construction, this is always zero, so we can ignore this term! We can substitute the above result into our varied action
+
+\begin{equation}
+    \delta S = 0 = \int_A^B \biggl( \frac{\partial L}{\partial q} - \frac{d}{dt}\biggl(\frac{\partial L}{\partial \dot{q}}\biggr) \biggr) \delta q~dt
+\end{equation}
+
+For the integral to be identically zero, we can ask the integrand to be zero. This gives us
+
+\begin{equation}
+    \frac{\partial L}{\partial q} = \frac{d}{dt}\biggl(\frac{\partial L}{\partial \dot{q}}\biggr)
+\end{equation}
+
+Which are called the \textit{Euler-Lagrange} equations. These give you the \textit{equations of motion}, in other words, they tell you how your system evolves. In other other words, they tell the particle which path to travel on.
+
+Now, in general, the Lagrangian is simply the kinetic minus potential energy of your system. It's beyond this document for now to prove this, but with it we can take an example. For a pendulum of length $l$, the only coordinate we care about is the pendulum angle $\theta$. The potential energy $V = mgh = mgl(1-\cos(\theta))$ is just based on the height of the pendulum. The kinetic energy $T = \frac{1}{2}mv^2 = \frac{1}{2}ml^2\dot{\theta}^2$ can be determined from calculating a circular velocity. So, the lagrangian can be written as
+
+\begin{equation}
+    L = T - V = \frac{1}{2}ml^2\dot{\theta}^2 - mgl(1-\cos(\theta))
+\end{equation}
+
+And we can apply the Euler-Lagrange equations, where $q = \theta$,
+
+\begin{equation}
+    \frac{\partial}{\partial \theta} \biggl( \frac{1}{2}ml^2\dot{\theta}^2 - mgl(1-\cos(\theta)) \biggr) = \frac{d}{dt}\biggl(\frac{\partial}{\partial \dot{\theta}} \biggl( \frac{1}{2}ml^2\dot{\theta}^2 - mgl(1-\cos(\theta)) \biggr) \biggr)
+\end{equation}
+
+Nicely, each derivative only hits one side,
+
+\begin{equation}
+    - mgl \sin(\theta) = ml^2\ddot{\theta}
+\end{equation}
+
+or,
+
+\begin{equation}
+    \ddot{\theta} = - \frac{g}{l}\sin(\theta)
+\end{equation}
+
+Which hopefully you remember from first year undergraduate physics. You can see how powerful and simple this is, and for more complicated systems this becomes the only feasible way to get the equations of motion.
+
+And, for more complicated setups, you can write down Lagrangians for electromagnetism and gravity, which let you calculate their equations of motion. That is super powerful.
+
+Now, let's think about our Euler-Lagrange equations
+
+\begin{equation}
+    \frac{\partial L}{\partial q} = \frac{d}{dt}\biggl(\frac{\partial L}{\partial \dot{q}}\biggr)
+\end{equation}
+
+Notice how if we have a term in our Lagrangian that is constant relative to every $q$ and $\dot{q}$, it will never appear in the equations of motion. More generally, you can add anything that is a total time derivative $L \rightarrow L + \frac{d}{dt}F(q,t)$, and it will drop out of every equation of motion. We can prove this by recalling the definition of the action,
+
+\begin{equation}
+    S = \int_A^BL~dt
+\end{equation}
+
+Which, with the addition of the total time derivative, becomes,
+
+\begin{equation}
+    S = \int_A^BL~dt + \int_A^B\frac{d}{dt}F(q,t)~dt
+\end{equation}
+
+This new term can be easily solved
+
+\begin{equation}
+    S = \int_A^BL~dt + \biggl[F(q,t)\biggr]_A^B
+\end{equation}
+
+The variation of this term becomes
+
+\begin{equation}
+    \delta S = \delta \int_A^BL~dt + \biggl[\frac{\partial F(q,t)}{dq}\delta q\biggr]_A^B
+\end{equation}
+
+Which we remember from the derivation of the Euler-Lagrange equations is identically zero because we hold our boundaries fixed during the variation. So, this term does not appear in any equations of motion.
+
+This is powerful, remember it. When you're confused about gauges, think back to here, they sort of work similarly to this.
+
+\subsection{Noether's Theorem}
+We can talk about conserved quantities in this Lagrangian formalism. One can find that each of these conserved quantities has a related symmetry, and this is called \textit{Noether's Theorem}, which is my favourite theorem in physics. 
+
+Let's say that I change my coordinates through a particular transformation $q_i \rightarrow q_i + \delta q_i$. When we vary the coordinates in this way, the Lagrangian varies in this way as well.
+
+\begin{equation}
+    \delta L =\frac{\partial L}{\partial q_i}\delta q_i + \frac{\partial L}{\partial \dot{q}_i}\delta \dot{q}_i
+\end{equation}
+
+Which we can rewrite by applying the Euler-Lagrange equation to the first term,
+
+\begin{equation}
+   \delta L = \frac{d}{dt}\biggl(\frac{\partial L}{\partial \dot{q}_i}\biggr)\delta q_i + \frac{\partial L}{\partial \dot{q}_i}\delta \dot{q}_i
+\end{equation}
+
+We can see the first term has a time derivative hitting $\frac{\partial L}{\partial \dot{q}_i}$, while the second term has a time derivative hitting $\delta q_i$. This is because these two terms can be expressed as a derivative of a product, which means we can rewrite this equation as
+
+\begin{equation}
+    \delta L = \frac{d}{dt}\biggl(\frac{\partial L}{\partial \dot{q}_i}\delta q_i\bigg)
+\end{equation}
+
+Now let us imagine that the transformation that we've done is a \textit{symmetry}. What this means is that changing the coordinates in this manner doesn't effect the physics of the system - so doesn't effect the Lagrangian, so $\delta L \equiv 0$,
+
+\begin{equation}
+    0 =\frac{d}{dt}\biggl(\frac{\partial L}{\partial \dot{q}_i}\delta q_i\bigg)
+\end{equation}
+
+Meaning the quantity inside the brackets is conserved over time! So, we've proved it, a symmetry generates a conserved quantity. You can be sure for the rest of your physics career to look for symmetries to find your conserved quantities.
+
+But this isn't all, you could have your lagrangian being changed by this coordinate transform as being some additive term
+
+\begin{equation}
+    L' = L + f(q,\dot{q},t)
+\end{equation}
+
+This doesn't happen all the time, but in some situations it does and we need to know how to handle it. Which means that a variation of the lagrangian needs to also satisfy
+
+\begin{equation}
+    \delta L = f
+\end{equation}
+
+Which means
+
+\begin{equation}
+    f =\frac{d}{dt}\biggl(\frac{\partial L}{\partial \dot{q}_i}\delta q_i\bigg)
+\end{equation}
+
+or, if $f$ happens to take the functional form of a total time derivative $f = \frac{d}{dt}F$,
+
+\begin{equation}
+    0 =\frac{d}{dt}\biggl(\frac{\partial L}{\partial \dot{q}_i}\delta q_i - F\bigg)
+\end{equation}
+
+Which is the general statement of Noether's theorem. The conserved quantity is therefore
+
+\begin{equation}
+    \frac{\partial L}{\partial \dot{q}_i}\delta q_i - F
+\end{equation}
+
+For completeness, recall that the repeated use of the index $i$ implies summation.
+
+Let's build some intuition with the orbit example. Let's say I have a particle 2 dimensional space with a central potential $V(r)$. The Lagrangian will be, in polar coordinates,
+
+\begin{equation}
+    L = T - V = \frac{1}{2}m\dot{r}^2 + \frac{1}{2}mr^2\dot{\theta}^2 - V(r)
+\end{equation}
+
+We can look at the equation of motion for $\theta$, which through the Euler-Lagrange equations give
+
+\begin{align}
+    \frac{\partial L}{\partial \theta} = \frac{d}{dt}\biggl(\frac{\partial L}{\partial \dot{\theta}}\biggr) \\
+    \implies \frac{d}{dt} \biggl(mr^2\dot{\theta} \biggr) = 0
+\end{align}
+
+Which is easy to evaluate since the Lagrangian is not explicitly dependant on $\theta$. This tells you that $mr^2\dot{\theta}$ is conserved, and this is actually the angular momentum. This is a result of the symmetry around $\theta$: rotating an orbit on the plane doesn't change the physics of what the objects are doing. This is Noether's theorem in action: the symmetry around $\theta$ gives you a conserved quantity $mr^2\dot{\theta}$. This can be seen more directly with the formula for Noether's theorem that we developed earlier. 
+
+Changing $\theta$ in the above system doesn't change the Lagrangian, so $F \equiv 0$. Then, we need to evaluate
+
+\begin{equation}
+    \frac{\partial L}{\partial \dot{q}_i}\delta q_i
+\end{equation}
+
+The confusing part is $\delta q_i$. This is just a variation, which can be written as a derivative, which in this case for a change in $\theta$ is a derivative with respect to $\theta$.
+
+\begin{equation}
+    \frac{\partial L}{\partial \dot{q}_i} \frac{d q_i}{d\theta}
+\end{equation}
+
+You can read off that this $\theta$ derivative is $0$ when $q_i=r$, and $1$ when $q_i=\theta$. So,
+
+\begin{equation}
+    \text{conserved quantity} = \frac{\partial L}{\partial \dot{\theta}} = mr^2\dot{\theta}
+\end{equation}
+
+Which is the same thing we had before.
+
+\subsection{Intuition From Electromagnetism (HEL 6)} \label{sec:EM}
+Now we take a turn to motivating the field equations for electromagnetism to get a feel for how field theories work. We will move from our early undergraduate understanding of the maxwell equations, to a theory with tensors and indices and stuff like that. It makes it harder to look at, but more compact to write, and you will need to understand this notation to understand arbitrary fields, which we'll have to write this way.
+
+We can start with the Lorentz force law for a particle with charge $q$ moving with velocity $\vec{u}$ through an electromagnetic field
+
+\begin{equation}
+    \vec{f} = q(\vec{E} + \vec{u} \times \vec{B})
+\end{equation}
+
+Everything in this bracket can be written more generally as our velocity $\vec{u}$ and some more complicated object $\vec{F}$ that encodes everything captured in this equation.
+
+\begin{equation}
+    \vec{f} = q\vec{F}\cdot\vec{u}
+\end{equation}
+
+We can drop the vector nonsense and move into index forms, assuming that $\vec{F}$ is a two-index tensor.
+
+\begin{equation}
+    f_\mu = q F_{\mu\nu}u^\nu
+\end{equation}
+
+Now, for interests sake, the 4-vector dot product $f_\mu u^\mu \equiv 0$ because it's orthorgonal to the force (this is because the 4-velocity is along the worldline, while the force is perpendicular to it, but this isn't important to know right now. Just know that this is using a 4-vector so there's also the time components), We can use this to write
+
+\begin{equation}
+    f_\mu u^\mu = q F_{\mu\nu}u^\mu u^\nu = 0
+\end{equation}
+
+The only way for this to be true is for $F$ to be antisymmetric when swapping around its two indices. Like mentioned a few sections ago, this will massively reduce the numbers of degrees of freedom.
+
+We can now relate $F$ to the source charges. In general, we describe this as $F$ changing as a result of the source, which we'll call the current $\vec{j}$. In general, this 4-vector takes the form $(\rho,I_x,I_y,I_z)$ where the time component is the charge distribution, and the spacial components describe the classical current. We write the field strength in terms of this general current,
+
+\begin{equation}
+    \nabla \vec{F} \propto \vec{j}
+\end{equation}
+
+We'll just say for now that they're equal, for our result this isn't hugely important, and we'll also switch to using indices
+
+\begin{equation}
+    \partial_\mu F^{\mu\nu} = j^\nu
+\end{equation}
+
+And, if you expand these out for the definition of $F$,\footnote{Which I won't do here, but basically you can represent it as a matrix where each entry is some component of $\vec{E}$ or $\vec{B}$.} you recover Maxwell's equations as you know them.
+
+An interesting thing to know is what happens as $j^\nu$ changes, so let's take a derivative of each side
+
+\begin{equation}
+    \partial_\mu \partial_\nu F^{\mu\nu} = \partial_\nu j^\nu
+\end{equation}
+
+But, as a result of the antisymmetry in $F$ and commutability of partial derivatives, the left hand side will be identically zero. As a result,
+
+\begin{equation}
+    \partial_\nu j^\nu = 0
+\end{equation}
+
+Which we call conservation of charge! There it is, from first principles. 
+
+Now, originally we said there's six degrees of freedom in $F$ due to antisymmetry. But, our source charges generate only four equations (one for each index of $\nu$), so the form of our tensor $F$ must be more constraining. Crucially, in four dimensions a vector has four degrees of freedom. Clearly, for there to be only four degrees of freedom, $F$ must be able to be written in terms of a vector $A$. One can write a tensor that is dependant on a single vector $A$ like
+
+\begin{equation}
+    F_{\mu\nu} = \partial_\mu A_\nu - \partial_\nu A_\mu
+\end{equation}
+
+Which is a little bit arbitrary, but it is the convention. There are other ways one could do this, but this is the nicest and is agreed upon. $A$ is known as the \textit{Vector Potential}.
+
+Let's now imagine we take our vector potential $A$ and add some arbitrary function $Q$ to it
+
+\begin{equation}
+    A_\mu' = A_\mu + Q_\mu
+\end{equation}
+
+How would $F$ change?
+
+\begin{equation}
+    F_{\mu\nu}' = \partial_\mu A_\nu - \partial_\nu A_\mu + \partial_\mu Q_\nu - \partial_\nu Q_\mu
+\end{equation}
+
+Now, $F'=F$, or in other words it is left invariant, if 
+
+\begin{equation}
+    \partial_\mu Q_\nu = \partial_\nu Q_\mu
+\end{equation}
+
+Which occurs if $Q$ is a derivative of some other function $Q_\mu = \partial_\mu \Psi$, because partial derivatives commute.
+
+So, you can add things to the scalar potential that are a total derivative of this form, and they won't change the field tensor, and therefore don't change the equations of motion, and therefore don't change the physics. This is very similar to how total derivatives added to the Lagrangian leaves the equations of motion invariant. This is called \textit{Gauge Invariance}, and abusing it is going to let us do many things in general relativity.
+
+What this also does is constrain the structure of our field equations further. Since there's an infinite set of functions $\Psi$ that we can add, this removes a degree of freedom from the field theory.
+
+We can rewrite our field equations as, by substituting the definition of $F$ in terms of $A$
+
+\begin{equation}
+    \partial_\mu \partial^\mu A_\nu - \partial_\nu \partial^\mu A_\mu = j_\nu
+\end{equation}
+
+The importance of the gauge symmetry is we can just choose a gauge wherein $\partial^\mu A_\mu = 0$.\footnote{The fact that this works is left as an exercise.} This relates all the values of $A_\mu$ to eachother, which adds an additional constraint that removes an additional degree of freedom. So, in the end, we have only two degrees of freedom. You already know this for sure, but you've seen it called the two polarization states of light, or light being described by two superimposed transverse waves. We can demonstrate the second bit by making use of $\partial^\mu A_\mu = 0$ in our above equation
+
+\begin{equation}
+    \partial_\mu \partial^\mu A_\nu = j_\nu
+\end{equation}
+
+Introducing the \textit{d'Alembertian} operator $\square^2 = \partial_\mu \partial^\mu$,
+
+\begin{align}
+    \square^2 A_\nu &= j_\nu \\
+    \square^2 F_{\mu\nu} &= 0
+\end{align}
+
+Let's imagine one dimensional space, with time, and we explicitly write out the d'Alembertian operator with derivatives, the first equation looks like
+
+\begin{equation}
+    \biggl(\frac{1}{c^2}\frac{\partial^2}{\partial t^2} - \frac{\partial^2}{\partial x^2} \biggr) A_\mu = j_\mu
+\end{equation}
+
+The solution of this two superimposed plane waves (one real, one imaginary) travelling at the speed of light... exactly how we understand electromagnetism to work! 
+
+We can understand why there's two plane waves intuitively. Light is moving along the $x$ direction. Special relativity prevents any wiggling of the photon along the $x$- and $t$-axes, since this would change lightspeed. So, the photon can only wiggle along the perpendicular $y$ and $z$ axis, which are represented by the two superimposed plane waves. 
+
+We had four degrees of freedom, but two were eliminated by the gauges. We call light a massless spin-$1$ particle. For a massive spin-$1$ particle, like a hypothetical graviton, it would be able to wiggle in the propagating direction as well (in other words, that $\partial^\mu A_\mu = 0$ constraint wouldn't apply) and so it would have three propagating degrees of freedom.
+
+This example will help us work in more unintuitive field theories
+
+\section{Gravitational Waves (HEL 17\&18)}
+I actually think we can build some more intuition here by working out the degrees of freedom in gravitational waves, and prove that they apply a transverse ``stretchy-squeezy" ripple as they propagate. This will also be insightful for understanding perturbations.
+
+\subsection{Perturbations}
+Imagine we had some space where our metric $g\mn$ was only a little bit different than that of flat space $\eta\mn$
+
+\begin{equation}
+    g\mn = \eta\mn + h\mn
+\end{equation}
+
+Here, $h\mn$ is a small tensor that describes our perturbations. Going forward, we can neglect terms of higher order in perturbation, since they will not contribute significantly to the physics. We can now do the classic move of considering a coordinate transform, and see what happens. Take, for example a transformation of the form
+
+\begin{equation}
+    \tilde{x}^\mu = x^\mu + \xi^\mu(x)
+\end{equation}
+
+And we are deciding that $\xi^\mu$ are small just like $h\mn$. We can easily work out that the jacobian will look like
+
+\begin{align}
+    \frac{\partial\tilde{x}^\mu}{\partial x^\nu} &= \delta_\nu^\mu + \partial_\nu\xi^\mu \\
+    \frac{\partial x^\mu}{\partial\tilde{x}^\nu} &= \delta_\nu^\mu - \partial_\nu\xi^\mu
+\end{align}
+
+Which we can use to work out how the metric changes. Recall that
+
+\begin{align}
+    \tilde{g}\mn &= g_{\rho\sigma} \frac{dx^\rho}{d\tilde{x}^\mu} \frac{dx^\sigma}{d\tilde{x}^\nu} \\
+    \tilde{g}\mn &= (\eta_{\rho\sigma} + h_{\rho\sigma})(\delta_\mu^\rho - \partial_\mu\xi^\rho)(\delta_\nu^\sigma - \partial_\nu\xi^\sigma)
+\end{align}
+
+Now recall that we can neglect higher order terms. So for example, when we multiply $x^\mu$ and $h\mn$ together, we can set that term to zero. Armed with this, we can obtain
+
+\begin{equation}
+    \tilde{g}\mn = \eta\mn + h\mn - \partial_\mu\xi_\nu - \partial_\nu\xi_\mu
+\end{equation}
+
+Which looks like our original equation for $g\mn$, except our `new' $\tilde{h}\mn$ goes with $\tilde{h}\mn=h\mn-\partial_\mu\xi_\nu-\partial_\nu\xi_\mu$. We can now see a connection with electromagnetism. In terms of the physics, if a transform of this form was made, the physics would remain unchanged. This is analogous to how rotating a Keplerian system doesn't change physics, just the way you look at it. And, consequently, an associated conserved quantity exists. There's a large freedom in allowed $h\mn$ that provide the same physics, and as a result, we lose degrees of freedom in the solution because of the generated conserved quantity! This is the \textit{gauge transformation} and \textit{Noether's Theorem} coming into play to save us again.
+
+\subsection{Obtaining the field equations}
+The next objective is to see how this affects the field equations (which I have not yet derived.. for a future edition of my notes),
+
+\begin{equation}
+    R\mn - \frac{1}{2}g\mn R = -\kappa T\mn
+\end{equation}
+
+Knowing that the Ricci tensor $R\mn$ is just a bunch of 2nd order derivatives of the metric, you can evaluate this. I'll spare the algebra, since it's not insightful. What is insightful is what we do with the result, so I'll just write it down
+
+\begin{equation}
+    \Box^2 \bar{h}\mn + \eta\mn\p_\rho\p_\sigma\bar{h}^{\rho\sigma} - \p_\nu\p_\rho\bar{h}^\rho_\mu - \p_\mu\p_\rho\bar{h}^\rho_\nu = -2\kappa T\mn
+\end{equation}
+
+For simplicity's sake, $h\mn$ has been swapped our for the so-called `trace-reverse` $\bar{h}\mn=h\mn-\frac{1}{2}\eta\mn\text{Tr}(h\mn)$. Henceforth we will be writing the trace of a tensor as simply the tensor's character without any indices. In this situation, $\bar{h}\mn=h\mn-\frac{1}{2}\eta\mn h$. 
+
+This field equation is crazy complicated, but fortunately the gauges are here to save us. We can see how our coordinate transformations affect this trace-reverse tensor
+
+\begin{align}
+    \tilde{\bar{h}}\mn &= \tilde{h}\mn - \frac{1}{2}\eta\mn \tilde{h} \\
+    &= h\mn - \frac{1}{2}\eta\mn h - \p_\mu\xi_\nu - \p_\nu\xi_\mu -\frac{1}{2}\eta\mn(-\p_\sigma\xi^\sigma - \p_\rho\xi^\rho) \\
+    &= \bar{h}\mn - \p_\mu\xi_\nu - \p_\nu\xi_\mu + \eta\mn\p_\sigma\xi^\sigma
+\end{align}
+
+Similar to electromagnetism, it is then of interest to see how this transformed quantity $\tilde{\bar{h}}\mn$ changes, which we can do by applying a derivative. First, we will switch to upper indices
+
+\begin{equation}
+    \p_\nu \tilde{\bar{h}}\umn = \p_\nu\bar{h}\umn - \p_\nu\p^\mu\xi^\nu - \p_\nu\p^\nu\xi^\mu + \p_\nu\eta\umn\p_\sigma\xi^\sigma
+\end{equation}
+
+We can see that the last term is just a scalar, so the derivative will be zero. Likewise the mixed derivatives will make the second term drop out. This leaves us with
+
+\begin{equation}
+    \p_\nu \tilde{\bar{h}}\umn = \p_\nu\bar{h}\umn - \Box^2\xi^\mu
+\end{equation}
+
+Here is where the gauge transformation works wonders. What if we choose our functions $\xi^\mu$ such that the right hand side of this equation is zero? Well, now $\p_\nu \tilde{\bar{h}}\umn = 0$. This is nice, and we can simply choose to work in this coordinate system, so we can drop the tilde. This is the power of the gauge transformation, recall how in covariant equations if you can satisfy an equation in one coordinate system, it's true in all coordinate systems? We're applying that here. We'll work in this convenient coordinate system and know that the physics works the same in the mathematically inconvenient ones.
+
+This coordinate system is so convenient because it magically makes three of the terms in the field equation go away, and we only are left with
+
+\begin{equation}
+    \Box^2\bar{h}\umn = -2\kappa T\umn
+\end{equation}
+
+And we just need to recall that we require $\p_\mu\bar{h}\umn=0$.
+
+But that's not all folks, we can also guarantee that $\p_\nu \tilde{\bar{h}}\umn = \p_\nu\bar{h}\umn$ if $\Box^2\xi^\mu=0$. This makes the quantity gauge invariant, and will be helpful shortly.
+
+\subsection{Stretchy-Squeezy}
+We can see that in the case of there being no stress-energy, we just get $\Box^2\bar{h}\umn = 0$, which is solved by two superimposed plane waves. The parallels with electromagnetism cannot be hitting you any harder.
+
+But we can go further than this here. We can write out this solution explicitly,
+
+\begin{equation}
+    \bar{h}\umn = A\umn e^{ik_\rho x^\rho}
+\end{equation}
+
+Where $A\umn$ and $k_\rho$ are some arbitrary functions called the \textit{amplitude tensor} and \textit{wavevector} respectively, which we can now constrain. First, we had the additional condition that $\p_\mu\bar{h}\umn=0$, which propagating this through our explicit plane-wave solution gives us
+
+\begin{equation}
+    A\umn k_\mu = 0
+\end{equation}
+
+Now if we wanted to imagine a wave propagating in the $x_3$ direction (and also in time, of course), the wavevector would be $\vec{k} = (k,0,0,k)$ since there is no $x_1$ or $x_2$ components. From the above relation, $A^{3\nu} = A^{0\nu}$. And, since this is a symmetric tensor (which you can see from the fact that $h\mn$ has to be symmetric), we are reduced to six degrees of freedom. However, we can then apply the additional $\Box^2\xi^\mu=0$ gauge transformation. This can be written as a solution of plane waves like earlier,
+
+\begin{equation}
+    \xi^\mu = \epsilon^\mu e^{ik_\rho x^\rho}
+\end{equation}
+
+Then, we can see how the amplitude tensor transforms,
+
+\begin{equation}
+    \tilde{A}\umn = A\umn - i\epsilon^\mu k^\nu - i\epsilon^\nu k^\mu +i\eta\umn\epsilon^\rho k_\rho
+\end{equation}
+
+Here's the fun part, we can choose our functions $\epsilon^\mu$ such that there are only two degrees of freedom remaining. We can choose that $\tilde{A}^{0\nu}=0$, $\tilde{A}^{11}=-\tilde{A}^{22}=a$, and $\tilde{A}^{12}=b$. This, in technical terms, is called the \textit{transverse-traceless gauge}. We can write the amplitude tensor as
+
+
+\begin{equation}
+    A_{TT}\umn=\begin{bmatrix}
+    0 & 0 & 0 & 0 \\
+    0 & a & b & 0 \\
+    0 & b & -a & 0 \\
+    0 & 0 & 0 & 0 \\
+    \end{bmatrix}
+\end{equation}
+
+Where now the values $a$ and $b$ describe our two possible polarization states. At this point, the comparisons with electromagnetism should be drilled into your mind. Now, on top of considering our wave propagating in the $x_3$ direction, consider it to have $b=0$ polarization. We'll now write our amplitude tensor with $A_{TT}\umn = ae_a\umn$, where $e_a$ is the \textit{polarization tensor}. It's just our amplitude tensor but with only 1s and 0s. We can now write out our metric perturbation, which pulls out the real part of our plane waves
+
+\begin{equation}
+    h_{TT}\umn = a e_a\umn\cos(k_\rho x^\rho)
+\end{equation}
+
+Recall that we're propagating along the $x_3$ direction with a wavevector $\vec{k} =(k,0,0,k)$. This gives us
+
+\begin{equation}
+    h_{TT}\umn = a e_a\umn\cos k(x_0 - x_3)
+\end{equation}
+
+Or, if we just call $x_3=x$ and rewrite $x_0$ as our time,
+
+\begin{equation}
+    h_{TT}\umn = a e_a\umn\cos k(ct - x)
+\end{equation}
+
+Fantastic, this just shows our wave travelling through the space at the speed of light (Do I have to remind you just how similar this is to electromagnetism? Have I mentioned that?).
+
+Well, here's the cool bit. We can describe the distance between two points in space with our line element. Here we will use a vector $\vec{\xi}$ to represent the orientation of the two nearby points, and we use subscripts $ij$ to correspond to only the spacelike coordinates (we're not in four dimensional spacetime here, we don't care about that).
+
+\begin{equation}
+    D^2 = -g_{ij}\xi^i\xi^j = (\delta_{ij} - h_{ij})\xi^i\xi^j
+\end{equation}
+
+But this is the coordinate distance, what about physical, actual distance? What about writing this so that $g_{ij}$ is incorporated into the coordinates? After all, some change in stress-energy will change $g_{ij}$ and if we instead want to see how our points move around compared to flat space, we should push that into the coordinates themselves. This is like moving from normal to conformal time in cosmology, if you've seen that before. We can do this by introducing a new coordinate $\zeta^i$,
+
+\begin{equation}
+    \zeta^i = \xi^i + \frac{1}{2}h_k^i\xi^i
+\end{equation}
+
+You can confirm yourself that plugging this into the distance formula gives,
+
+\begin{equation}
+    D^2 = \delta_{ij}\zeta^i\zeta^j
+\end{equation}
+
+Now, we can see how our physical coordinate changes!
+
+\begin{align}
+    \zeta^i &= \xi^i + \frac{1}{2}h_k^i\xi^i = \xi^i + \frac{1}{2}a e_{j,a}^i \cos k(ct - x) \xi^j\\
+    &\downarrow \\
+    \zeta^1 &= \xi^1 - \frac{1}{2}a \cos k(ct - x) \xi^1 \\
+    \zeta^2 &= \xi^2 + \frac{1}{2}a \cos k(ct - x) \xi^2 \\
+    \zeta^3 &= \xi^3
+\end{align}
+
+And there it is! What does this mean? the 3rd component of $\zeta$ doesn't change, but the first and second components oscillate. So, as a gravitational waves propagates along the $x_3$ direction, $x_1$ and $x_2$ oscillate stretching and squeezing! 
+
+%\begin{equation}
+%    \boxed{\text{I love Ben}}
+%\end{equation}
+
+\bibliographystyle{plain}
+%\bibliography{bibliography}
+\end{document}
